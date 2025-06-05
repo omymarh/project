@@ -1,10 +1,11 @@
-import {type CardColor, ColumnPosition, Permission, SwapDirection} from '@/Enums'
-import {ChevronLeftIcon, ChevronRightIcon, EllipsisVerticalIcon} from '@heroicons/react/24/outline'
+import { type CardColor, ColumnPosition, Permission, SwapDirection } from '@/Enums'
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline'
 import React from 'react'
-import {convertToBackgroundColor} from '@/Utils/color'
-import {router, usePage} from '@inertiajs/react'
-import {type BoardShowProps} from '@/Pages/Board/Show'
-import {getPermissionLevel} from "@/Utils";
+import { convertToBackgroundColor } from '@/Utils/color'
+import { router, usePage } from '@inertiajs/react'
+import { type BoardShowProps } from '@/Pages/Board/Show'
+import { getPermissionLevel } from "@/Utils"
+import { Draggable } from 'react-beautiful-dnd'
 
 interface Props {
   columnId: string
@@ -14,6 +15,7 @@ interface Props {
   columnPosition: ColumnPosition
   permissionLevel: number
   clickEditHandler: (id: string) => void
+  index: number // Ajoute l'index pour react-beautiful-dnd
 }
 
 export default function TaskCard ({
@@ -23,7 +25,8 @@ export default function TaskCard ({
   color,
   columnPosition,
   permissionLevel,
-  clickEditHandler
+  clickEditHandler,
+  index
 }: Props): JSX.Element {
   const { columns } = usePage<BoardShowProps>().props
 
@@ -56,79 +59,93 @@ export default function TaskCard ({
     })
   }
 
+  // Le composant Draggable nécessite draggableId et index
   return (
-    <div className="card card-compact shadow-md border border-neutral" style={convertToBackgroundColor(color)}>
-      <div className="card-body !p-2">
-        <header className="flex justify-between">
-          {permissionLevel <= getPermissionLevel(Permission.LimitedCardOperator) && (
-            <>
-              <div className="space-x-2">
-                <button
-                  type="button"
-                  className={'btn btn-ghost btn-square btn-xs ' + (atFirstColumn ? '!bg-transparent' : '')}
-                  onClick={() => {
-                    handleMove(SwapDirection.Left)
-                  }}
-                  disabled={atFirstColumn}
-                >
-                  <ChevronLeftIcon className="h-6 w-6"/>
-                </button>
-                <button
-                  type="button"
-                  className={'btn btn-ghost btn-square btn-xs ' + (atLastColumn ? '!bg-transparent' : '')}
-                  onClick={() => {
-                    handleMove(SwapDirection.Right)
-                  }}
-                  disabled={atLastColumn}
-                >
-                  <ChevronRightIcon className="h-6 w-6"/>
-                </button>
-              </div>
-              <div className="dropdown dropdown-end">
-                <div tabIndex={0} role="button" className="btn btn-ghost btn-square btn-xs">
-                  <EllipsisVerticalIcon className="h-6 w-6"/>
-                </div>
-                <ul className="p-0 shadow-sm menu menu-sm dropdown-content z-[1] bg-base-100 rounded-box w-36 border">
-                  {permissionLevel <= getPermissionLevel(Permission.CardOperator) && (
-                    <li>
-                      <button onClick={() => {
-                        clickEditHandler(taskId)
-                      }}>Edit
-                      </button>
-                    </li>
-                  )}
-                  <li className={atLastColumn ? 'disabled' : ''}>
+    <Draggable draggableId={taskId} index={index}>
+      {(provided, snapshot) => (
+        <div
+          className="card card-compact shadow-md border border-neutral"
+          style={{
+            ...convertToBackgroundColor(color),
+            boxShadow: snapshot.isDragging ? "0 2px 8px rgba(0,0,0,0.15)" : ""
+          }}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          <div className="card-body !p-2">
+            <header className="flex justify-between">
+              {permissionLevel <= getPermissionLevel(Permission.LimitedCardOperator) && (
+                <>
+                  <div className="space-x-2">
                     <button
-                      onClick={() => {
-                        handleMove(SwapDirection.Right)
-                      }}
-                      disabled={atLastColumn}
-                    >Move to Right
-                    </button>
-                  </li>
-                  <li className={atFirstColumn ? 'disabled' : ''}>
-                    <button
+                      type="button"
+                      className={'btn btn-ghost btn-square btn-xs ' + (atFirstColumn ? '!bg-transparent' : '')}
                       onClick={() => {
                         handleMove(SwapDirection.Left)
                       }}
                       disabled={atFirstColumn}
-                    >Move to Left
+                    >
+                      <ChevronLeftIcon className="h-6 w-6" />
                     </button>
-                  </li>
-                  {permissionLevel <= getPermissionLevel(Permission.CardOperator) && (
-                    <li>
-                      <button className="text-error" onClick={handleClickDelete}>Delete</button>
-                    </li>
-                  )}
-                </ul>
-              </div>
-            </>
-          )}
-        </header>
-        <div className="p-1">
-          <p>{body}</p>
+                    <button
+                      type="button"
+                      className={'btn btn-ghost btn-square btn-xs ' + (atLastColumn ? '!bg-transparent' : '')}
+                      onClick={() => {
+                        handleMove(SwapDirection.Right)
+                      }}
+                      disabled={atLastColumn}
+                    >
+                      <ChevronRightIcon className="h-6 w-6" />
+                    </button>
+                  </div>
+                  <div className="dropdown dropdown-end">
+                    <div tabIndex={0} role="button" className="btn btn-ghost btn-square btn-xs">
+                      <EllipsisVerticalIcon className="h-6 w-6" />
+                    </div>
+                    <ul className="p-0 shadow-sm menu menu-sm dropdown-content z-[1] bg-base-100 rounded-box w-36 border">
+                      {permissionLevel <= getPermissionLevel(Permission.CardOperator) && (
+                        <li>
+                          <button onClick={() => {
+                            clickEditHandler(taskId)
+                          }}>Edit
+                          </button>
+                        </li>
+                      )}
+                      <li className={atLastColumn ? 'disabled' : ''}>
+                        <button
+                          onClick={() => {
+                            handleMove(SwapDirection.Right)
+                          }}
+                          disabled={atLastColumn}
+                        >Move to Right
+                        </button>
+                      </li>
+                      <li className={atFirstColumn ? 'disabled' : ''}>
+                        <button
+                          onClick={() => {
+                            handleMove(SwapDirection.Left)
+                          }}
+                          disabled={atFirstColumn}
+                        >Move to Left
+                        </button>
+                      </li>
+                      {permissionLevel <= getPermissionLevel(Permission.CardOperator) && (
+                        <li>
+                          <button className="text-error" onClick={handleClickDelete}>Delete</button>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </>
+              )}
+            </header>
+            <div className="p-1">
+              <p>{body}</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Draggable>
   )
 }

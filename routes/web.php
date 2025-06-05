@@ -11,6 +11,9 @@ use App\Http\Controllers\Web\ColumnWebController;
 use App\Http\Controllers\Web\Page\HomePageController;
 use App\Http\Controllers\Web\Page\BoardPageController;
 use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\TaskSearchController;
+use App\Http\Controllers\NoteController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,6 +32,9 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return to_route('web.page.home');
 });
+Route::get('/about', function () {
+    return Inertia::render('About');
+})->name('about');
 
 Route::middleware('guest')->group(function () {
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
@@ -49,11 +55,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/boards/{board}/columns/generate', [ColumnWebController::class, 'generate'])->name('boards.columns.generate');
         Route::patch('/columns/{column}/swap', [ColumnWebController::class, 'swap'])->name('columns.swap');
 
+    
         Route::apiResource('columns.cards', CardWebController::class)->shallow()->except(['index']);
         Route::patch('/cards/{card}/move', [CardWebController::class, 'move'])->name('cards.move');
 
         Route::get('/users/search', [UserController::class, 'search'])->name('users.search')->middleware(['throttle:search']);
 
+        Route::get('/notes/create', [NoteController::class, 'create'])->name('notes.create');
+        Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
+        Route::get('/notes/{id}', [NoteController::class, 'show'])->name('notes.show'); 
+
+        Route::get('/task-search', [TaskSearchController::class, 'search']);
         Route::name('page.')->group(function () {
             Route::get('/home', HomePageController::class)->name('home');
             Route::get('/board/{boardAlias}', [BoardPageController::class, 'show'])->name('board.show');

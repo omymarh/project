@@ -9,7 +9,7 @@ export default function GuestableNavbar (): JSX.Element {
     <>
       <div className="navbar bg-base-100 shadow-md z-10 sticky">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">Stageboard</a>
+          <a className="btn btn-ghost text-xl">Kanbanboard</a>
         </div>
 
         <div className="flex-none">
@@ -34,17 +34,17 @@ export default function GuestableNavbar (): JSX.Element {
       </div>
       <dialog className={'modal' + (activeModal ? ' modal-open' : '')}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">About Stageboard</h3>
+          <h3 className="font-bold text-lg mb-4">About Kanbanboard</h3>
           <div className="text-sm space-y-4">
             <div>
-              <p>Stageboard v{import.meta.env.VITE_APP_VERSION}</p>
+              <p>Kanbanboard v{import.meta.env.VITE_APP_VERSION}</p>
             </div>
             <div>
-              <p>Created by: Ivan Rizkyanto</p>
-              <p>Contact: ivanzkyanto@outlook.com</p>
+              <p>Created by: Omayma Rharib</p>
+              <p>Contact: omaymarharib99@gmail.com</p>
             </div>
             <div>
-              <a href="https://github.com/stackpan/stageboard/blob/main/LICENSE" className="text-purple-800">MIT License</a>
+              <a href="https://github.com/omymarh/Kanban/blob/main/LICENSE" className="text-purple-800">MIT License</a>
             </div>
           </div>
           <div className="modal-action">

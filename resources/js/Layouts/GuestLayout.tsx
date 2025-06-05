@@ -6,7 +6,7 @@ export default function Guest ({ children, footer }: PropsWithChildren<{ footer?
     <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
       <div>
         <Link href="/">
-          <div className="text-2xl font-bold py-4">Stageboard</div>
+          <div className="text-2xl font-bold py-4">Kanbanboard</div>
         </Link>
       </div>
 

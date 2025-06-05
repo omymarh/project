@@ -45,18 +45,18 @@ class CardWebController extends Controller
     }
 
     public function update(UpdateCardRequest $request, Card $card): RedirectResponse
-    {
-        $validated = $request->validated();
+{
+    $validated = $request->validated();
+    $data = new CardDto(
+        body: $validated['body'],
+        color: $validated['color'] ?? null,
+    );
+    $this->cardService->update($card, $data);
+    return back();
+}
 
-        $data = new CardDto(
-            body: $validated['body'],
-            color: $validated['color'],
-        );
 
-        $this->cardService->update($card, $data);
-
-        return back();
-    }
+    
 
     public function destroy(Card $card): RedirectResponse
     {
