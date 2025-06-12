@@ -1,20 +1,37 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/vendor
+# === Environnement ===
 .env
-.env.backup
-.env.production
-.env.testing
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
+.env.*
 auth.json
+
+# === PHP / Laravel ===
+/vendor/
+/storage/*.key
+/storage/*.log
+/storage/framework/*
+/bootstrap/cache/*
+.phpunit.cache
+.phpunit.result.cache
+
+# === Frontend (Vite, Laravel Mix, etc.) ===
+/node_modules/
+/public/build/
+/public/hot/
+/public/storage/
 npm-debug.log
 yarn-error.log
+
+# === IDEs et outils dev ===
+/.idea/
+/.vscode/
 /.fleet
-/.idea
-/.vscode
+
+# === Laravel Homestead ===
+Homestead.yaml
+Homestead.json
+
+# === OS fichiers cachés et temporaires ===
+*.log
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
